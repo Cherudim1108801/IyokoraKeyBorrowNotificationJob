@@ -1,0 +1,49 @@
+name: Key Pickup Reminder
+
+on:
+  schedule:
+    # 木曜 12:00 JST (03:00 UTC)
+    - cron: "0 3 * * 4"
+    # 金曜 12:00 JST (03:00 UTC)
+    - cron: "0 3 * * 5"
+    # 土曜 08:00 JST (前日金曜 23:00 UTC)
+    - cron: "0 23 * * 5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - run: dotnet restore
+
+      - run: dotnet build --configuration Release --no-restore
+
+      - run: dotnet test --configuration Release --no-build
+
+  notify:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - run: dotnet restore
+
+      - name: Run notification job
+        run: dotnet run --project IyokoraKeyBorrowNotificationJob/IyokoraKeyBorrowNotificationJob.csproj --configuration Release
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
