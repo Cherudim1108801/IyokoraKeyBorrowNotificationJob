@@ -6,11 +6,12 @@ namespace IyokoraKeyBorrowNotificationJob.Infrastructure;
 
 public sealed class FirestorePracticeScheduleRepository(FirestoreDb firestoreDb) : IPracticeScheduleRepository
 {
-    public async Task<IReadOnlyList<PracticeSchedule>> GetByDateAsync(DateTime date, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<PracticeSchedule>> GetByDateRangeAsync(DateTime start, DateTime end, CancellationToken cancellationToken = default)
     {
         Query query = firestoreDb.Collection(PracticeScheduleOptions.CollectionName)
             .WhereEqualTo("groupId", PracticeScheduleOptions.GroupId)
-            .WhereEqualTo("date", Timestamp.FromDateTime(date));
+            .WhereGreaterThanOrEqualTo("date", Timestamp.FromDateTime(start))
+            .WhereLessThanOrEqualTo("date", Timestamp.FromDateTime(end));
 
         QuerySnapshot snapshot = await query.GetSnapshotAsync(cancellationToken);
 

@@ -4,5 +4,6 @@ namespace IyokoraKeyBorrowNotificationJob.Application;
 
 public interface IPracticeScheduleRepository
 {
-    Task<IReadOnlyList<PracticeSchedule>> GetByDateAsync(DateTime date, CancellationToken cancellationToken = default);
+    /// <summary>start・end の両方を含む範囲(閉区間)で practices を取得する。</summary>
+    Task<IReadOnlyList<PracticeSchedule>> GetByDateRangeAsync(DateTime start, DateTime end, CancellationToken cancellationToken = default);
 }
