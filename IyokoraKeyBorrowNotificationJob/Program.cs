@@ -26,8 +26,10 @@ INotificationSender notificationSender = new LineNotificationSender(
 
 var useCase = new SendKeyPickupRemindersUseCase(practiceScheduleRepository, notificationSender);
 
-const int daysBefore = 3;
-var result = await useCase.ExecuteAsync(DateTime.UtcNow, daysBefore);
+const int lookAheadDays = 7;
+var result = await useCase.ExecuteAsync(DateTime.UtcNow, lookAheadDays);
 
 Console.WriteLine(
-    $"対象日(JST基準): {result.TargetDate:yyyy-MM-dd} / 該当する練習件数: {result.SchedulesFound} / 送信件数: {result.RemindersSent}");
+    result.NearestPracticeDate is { } nearestPracticeDate
+        ? $"直近の対象日(JST基準): {nearestPracticeDate:yyyy-MM-dd} / {lookAheadDays}日以内の練習件数: {result.SchedulesInRange} / 送信件数: {result.RemindersSent}"
+        : $"{lookAheadDays}日以内に該当する練習が見つかりませんでした。");

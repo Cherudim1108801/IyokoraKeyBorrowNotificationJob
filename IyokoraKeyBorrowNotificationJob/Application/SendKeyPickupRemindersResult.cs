@@ -1,3 +1,3 @@
 namespace IyokoraKeyBorrowNotificationJob.Application;
 
-public sealed record SendKeyPickupRemindersResult(DateTime TargetDate, int SchedulesFound, int RemindersSent);
+public sealed record SendKeyPickupRemindersResult(DateTime? NearestPracticeDate, int SchedulesInRange, int RemindersSent);

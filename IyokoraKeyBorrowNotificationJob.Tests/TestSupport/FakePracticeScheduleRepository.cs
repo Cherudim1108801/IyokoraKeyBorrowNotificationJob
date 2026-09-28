@@ -5,11 +5,11 @@ namespace IyokoraKeyBorrowNotificationJob.Tests.TestSupport;
 
 public sealed class FakePracticeScheduleRepository(IReadOnlyList<PracticeSchedule> schedules) : IPracticeScheduleRepository
 {
-    public DateTime? RequestedDate { get; private set; }
+    public (DateTime Start, DateTime End)? RequestedRange { get; private set; }
 
-    public Task<IReadOnlyList<PracticeSchedule>> GetByDateAsync(DateTime date, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<PracticeSchedule>> GetByDateRangeAsync(DateTime start, DateTime end, CancellationToken cancellationToken = default)
     {
-        RequestedDate = date;
+        RequestedRange = (start, end);
         return Task.FromResult(schedules);
     }
 }
