@@ -11,6 +11,7 @@ await File.WriteAllTextAsync(credPath, serviceAccountJson);
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credPath);
 
 var projectId = ServiceAccountCredentialHelper.GetProjectId(serviceAccountJson);
+Console.WriteLine($"接続先Firestoreプロジェクト: {projectId}");
 FirestoreDb firestoreDb = FirestoreDb.Create(projectId);
 
 using var httpClient = new HttpClient();
