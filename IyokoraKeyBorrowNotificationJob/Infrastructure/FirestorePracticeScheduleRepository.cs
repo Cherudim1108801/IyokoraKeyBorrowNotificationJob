@@ -15,12 +15,18 @@ public sealed class FirestorePracticeScheduleRepository(FirestoreDb firestoreDb)
 
         QuerySnapshot snapshot = await query.GetSnapshotAsync(cancellationToken);
 
-        return snapshot.Documents.Select(ToPracticeSchedule).ToList();
+        return snapshot.Documents.Select(doc => ToPracticeSchedule(doc.Id, doc.ToDictionary())).ToList();
     }
 
-    private static PracticeSchedule ToPracticeSchedule(DocumentSnapshot doc) => new(
-        Id: doc.Id,
-        Date: doc.GetValue<Timestamp>("date").ToDateTime(),
-        RequiresKeyPickup: doc.ContainsField("requiresKeyPickup") && doc.GetValue<bool>("requiresKeyPickup"),
-        KeyPickedUp: doc.ContainsField("keyPickedUp") && doc.GetValue<bool>("keyPickedUp"));
+    /// <summary>
+    /// Firestoreドキュメントのフィールド群から PracticeSchedule を組み立てる。
+    /// DocumentSnapshot はテストコードから直接生成できないため、ToDictionary() で
+    /// 取り出した素のフィールド値を受け取る形にして、フィールド名・型の対応関係を
+    /// 単体テストで検証できるようにしている。
+    /// </summary>
+    public static PracticeSchedule ToPracticeSchedule(string id, IReadOnlyDictionary<string, object> data) => new(
+        Id: id,
+        Date: ((Timestamp)data["date"]).ToDateTime(),
+        RequiresKeyPickup: data.TryGetValue("requiresKeyPickup", out var requiresKeyPickup) && (bool)requiresKeyPickup,
+        KeyPickedUp: data.TryGetValue("keyPickedUp", out var keyPickedUp) && (bool)keyPickedUp);
 }
