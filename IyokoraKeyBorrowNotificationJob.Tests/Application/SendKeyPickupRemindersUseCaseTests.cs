@@ -22,11 +22,15 @@ public class SendKeyPickupRemindersUseCaseTests
         var sender = new FakeNotificationSender();
         var useCase = new SendKeyPickupRemindersUseCase(repository, sender);
 
-        await useCase.ExecuteAsync(utcNow, daysBefore: 3);
+        var result = await useCase.ExecuteAsync(utcNow, daysBefore: 3);
 
         Assert.Equal(targetDate, repository.RequestedDate);
         var message = Assert.Single(sender.SentMessages);
         Assert.Equal("【リマインド】3日後の練習(2026/04/04)の鍵の受け取りが未登録です。", message);
+
+        Assert.Equal(targetDate, result.TargetDate);
+        Assert.Equal(3, result.SchedulesFound);
+        Assert.Equal(1, result.RemindersSent);
     }
 
     [Fact]
@@ -43,9 +47,11 @@ public class SendKeyPickupRemindersUseCaseTests
         var sender = new FakeNotificationSender();
         var useCase = new SendKeyPickupRemindersUseCase(new FakePracticeScheduleRepository(schedules), sender);
 
-        await useCase.ExecuteAsync(utcNow, daysBefore: 3);
+        var result = await useCase.ExecuteAsync(utcNow, daysBefore: 3);
 
         Assert.Empty(sender.SentMessages);
+        Assert.Equal(2, result.SchedulesFound);
+        Assert.Equal(0, result.RemindersSent);
     }
 
     [Fact]
@@ -57,8 +63,10 @@ public class SendKeyPickupRemindersUseCaseTests
             new FakePracticeScheduleRepository([]),
             sender);
 
-        await useCase.ExecuteAsync(utcNow, daysBefore: 3);
+        var result = await useCase.ExecuteAsync(utcNow, daysBefore: 3);
 
         Assert.Empty(sender.SentMessages);
+        Assert.Equal(0, result.SchedulesFound);
+        Assert.Equal(0, result.RemindersSent);
     }
 }

@@ -11,6 +11,7 @@ await File.WriteAllTextAsync(credPath, serviceAccountJson);
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credPath);
 
 var projectId = ServiceAccountCredentialHelper.GetProjectId(serviceAccountJson);
+Console.WriteLine($"接続先Firestoreプロジェクト: {projectId}");
 FirestoreDb firestoreDb = FirestoreDb.Create(projectId);
 
 using var httpClient = new HttpClient();
@@ -26,4 +27,7 @@ INotificationSender notificationSender = new LineNotificationSender(
 var useCase = new SendKeyPickupRemindersUseCase(practiceScheduleRepository, notificationSender);
 
 const int daysBefore = 3;
-await useCase.ExecuteAsync(DateTime.UtcNow, daysBefore);
+var result = await useCase.ExecuteAsync(DateTime.UtcNow, daysBefore);
+
+Console.WriteLine(
+    $"対象日(JST基準): {result.TargetDate:yyyy-MM-dd} / 該当する練習件数: {result.SchedulesFound} / 送信件数: {result.RemindersSent}");
