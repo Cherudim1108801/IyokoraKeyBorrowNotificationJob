@@ -6,11 +6,12 @@ public sealed class SendKeyPickupRemindersUseCase(
     IPracticeScheduleRepository practiceScheduleRepository,
     INotificationSender notificationSender)
 {
-    public async Task ExecuteAsync(DateTime utcNow, int daysBefore, CancellationToken cancellationToken = default)
+    public async Task<SendKeyPickupRemindersResult> ExecuteAsync(DateTime utcNow, int daysBefore, CancellationToken cancellationToken = default)
     {
         var targetDate = PracticeTargetDateCalculator.GetTargetDate(utcNow, daysBefore);
         var schedules = await practiceScheduleRepository.GetByDateAsync(targetDate, cancellationToken);
 
+        var remindersSent = 0;
         foreach (var schedule in schedules)
         {
             if (!schedule.NeedsReminder)
@@ -21,6 +22,9 @@ public sealed class SendKeyPickupRemindersUseCase(
             await notificationSender.SendAsync(
                 ReminderMessageBuilder.Build(daysBefore, schedule.Date),
                 cancellationToken);
+            remindersSent++;
         }
+
+        return new SendKeyPickupRemindersResult(targetDate, schedules.Count, remindersSent);
     }
 }
