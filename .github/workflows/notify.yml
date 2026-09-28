@@ -2,8 +2,12 @@ name: Key Pickup Reminder
 
 on:
   schedule:
-    # 毎日 09:00 JST (00:00 UTC) に実行
-    - cron: "0 0 * * *"
+    # 木曜 12:00 JST (03:00 UTC)
+    - cron: "0 3 * * 4"
+    # 金曜 12:00 JST (03:00 UTC)
+    - cron: "0 3 * * 5"
+    # 土曜 08:00 JST (前日金曜 23:00 UTC)
+    - cron: "0 23 * * 5"
   workflow_dispatch: {}
 
 permissions:

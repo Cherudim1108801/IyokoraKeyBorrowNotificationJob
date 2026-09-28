@@ -1,4 +1,4 @@
-namespace IyokoraKeyBorrowNotificationJob;
+namespace IyokoraKeyBorrowNotificationJob.Infrastructure;
 
 /// <summary>
 /// Firestore の practices コレクションに関する定数。

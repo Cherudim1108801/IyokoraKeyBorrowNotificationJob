@@ -1,4 +1,6 @@
-namespace IyokoraKeyBorrowNotificationJob.Tests;
+using IyokoraKeyBorrowNotificationJob.Domain;
+
+namespace IyokoraKeyBorrowNotificationJob.Tests.Domain;
 
 public class PracticeTargetDateCalculatorTests
 {

@@ -1,4 +1,4 @@
-namespace IyokoraKeyBorrowNotificationJob;
+namespace IyokoraKeyBorrowNotificationJob.Domain;
 
 public static class ReminderMessageBuilder
 {

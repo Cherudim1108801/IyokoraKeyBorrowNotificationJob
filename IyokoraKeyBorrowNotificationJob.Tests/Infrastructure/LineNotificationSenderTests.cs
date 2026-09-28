@@ -1,19 +1,20 @@
 using System.Net;
 using System.Text.Json;
+using IyokoraKeyBorrowNotificationJob.Infrastructure;
 using IyokoraKeyBorrowNotificationJob.Tests.TestSupport;
 
-namespace IyokoraKeyBorrowNotificationJob.Tests;
+namespace IyokoraKeyBorrowNotificationJob.Tests.Infrastructure;
 
-public class LineMessagingClientTests
+public class LineNotificationSenderTests
 {
     [Fact]
-    public async Task SendMessageAsync_PostsExpectedRequest()
+    public async Task SendAsync_PostsExpectedRequest()
     {
         var handler = new FakeHttpMessageHandler();
         using var httpClient = new HttpClient(handler);
-        var client = new LineMessagingClient(httpClient, "channel-token", "user-123");
+        var sender = new LineNotificationSender(httpClient, "channel-token", "user-123");
 
-        await client.SendMessageAsync("こんにちは");
+        await sender.SendAsync("こんにちは");
 
         var request = handler.LastRequest;
         Assert.NotNull(request);
@@ -30,12 +31,12 @@ public class LineMessagingClientTests
     }
 
     [Fact]
-    public async Task SendMessageAsync_Throws_WhenResponseIsNotSuccess()
+    public async Task SendAsync_Throws_WhenResponseIsNotSuccess()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.BadRequest);
         using var httpClient = new HttpClient(handler);
-        var client = new LineMessagingClient(httpClient, "channel-token", "user-123");
+        var sender = new LineNotificationSender(httpClient, "channel-token", "user-123");
 
-        await Assert.ThrowsAsync<HttpRequestException>(() => client.SendMessageAsync("失敗するはず"));
+        await Assert.ThrowsAsync<HttpRequestException>(() => sender.SendAsync("失敗するはず"));
     }
 }

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace IyokoraKeyBorrowNotificationJob;
+namespace IyokoraKeyBorrowNotificationJob.Infrastructure;
 
 public static class ServiceAccountCredentialHelper
 {

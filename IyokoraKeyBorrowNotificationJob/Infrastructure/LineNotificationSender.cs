@@ -1,14 +1,15 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using IyokoraKeyBorrowNotificationJob.Application;
 
-namespace IyokoraKeyBorrowNotificationJob;
+namespace IyokoraKeyBorrowNotificationJob.Infrastructure;
 
-public sealed class LineMessagingClient(HttpClient httpClient, string channelAccessToken, string userId)
+public sealed class LineNotificationSender(HttpClient httpClient, string channelAccessToken, string userId) : INotificationSender
 {
     private const string PushMessageUrl = "https://api.line.me/v2/bot/message/push";
 
-    public async Task SendMessageAsync(string text, CancellationToken cancellationToken = default)
+    public async Task SendAsync(string message, CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, PushMessageUrl)
         {
@@ -17,7 +18,7 @@ public sealed class LineMessagingClient(HttpClient httpClient, string channelAcc
                 JsonSerializer.Serialize(new
                 {
                     to = userId,
-                    messages = new[] { new { type = "text", text } }
+                    messages = new[] { new { type = "text", text = message } }
                 }),
                 Encoding.UTF8,
                 "application/json")

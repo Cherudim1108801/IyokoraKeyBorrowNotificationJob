@@ -1,4 +1,6 @@
-namespace IyokoraKeyBorrowNotificationJob.Tests;
+using IyokoraKeyBorrowNotificationJob.Infrastructure;
+
+namespace IyokoraKeyBorrowNotificationJob.Tests.Infrastructure;
 
 public class ServiceAccountCredentialHelperTests
 {
