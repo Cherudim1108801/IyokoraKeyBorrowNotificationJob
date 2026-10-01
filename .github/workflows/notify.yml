@@ -2,12 +2,14 @@ name: Key Pickup Reminder
 
 on:
   schedule:
-    # 木曜 12:00 JST (03:00 UTC)
-    - cron: "0 3 * * 4"
-    # 金曜 12:00 JST (03:00 UTC)
-    - cron: "0 3 * * 5"
-    # 土曜 08:00 JST (前日金曜 23:00 UTC)
-    - cron: "0 23 * * 5"
+    # 木曜 12:05 JST (03:05 UTC)
+    # ちょうど毎時0分はGitHub Actions側のスケジューラが混雑し、
+    # 実行が遅延・スキップされやすいため数分ずらしている
+    - cron: "5 3 * * 4"
+    # 金曜 12:05 JST (03:05 UTC)
+    - cron: "5 3 * * 5"
+    # 土曜 08:05 JST (前日金曜 23:05 UTC)
+    - cron: "5 23 * * 5"
   workflow_dispatch: {}
 
 permissions:
